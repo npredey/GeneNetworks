@@ -1,5 +1,7 @@
 #import psycopg2
 import csv
+
+import sys
 from datasketch import MinHash
 import numpy as np
 import _pickle as pickle
@@ -9,6 +11,7 @@ from Bio import SeqIO
 import itertools
 from sortedcontainers import SortedSet
 import re
+import argparse
 
 basePath = "/Users/nickpredey/Documents/Networks/PickleFilesMinHash/"
 #basePath = "/home/lsb456/Networks_nick/"
@@ -18,6 +21,7 @@ matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
 pickle_file_path = basePath + "all_sequences.p"
 accession_pickle_file_path = basePath + "accession_dict.p"
 results_output_path = basePath + "test_matrix.csv"
+cluster_file_path = "/Users/nickpredey/Documents/USearch_AA_PT35"
 from_k = 7
 to_k = 9
 
@@ -139,83 +143,80 @@ def compareAccessions(gene_list, accession_dict, matrix_k):
                 out_cluster_minHash.add(matrix_k[lookup_row][lookup_col])
     return in_cluster_minHash[0], in_cluster_minHash[len(in_cluster_minHash)-1], \
            out_cluster_minHash[0], out_cluster_minHash[len(out_cluster_minHash)-1]
-sequence_dict = pickle.load(open(pickle_file_path, "rb"))
-accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
-matrix_k = np.loadtxt(matrix_output_path + "matrix_k6.txt")
-cluster_file_paths = getClusterFilenamesFromDirectory("/Users/nickpredey/Documents/USearch_AA_PT35")
-file_stats = list()
-for path in cluster_file_paths:
-    split_path = str(path).split("/")
-    cluster_name = re.findall("\d+", split_path[len(split_path)-1])
-    num_records = 0
-    gene_list = list()
-    for record in SeqIO.parse(path, "fasta"):
-        gene_list.append(record.id)
-        num_records = num_records + 1
-    if num_records > 2:
-        print("Checking cluster #" + str(cluster_name))
-        in_max, in_min, out_max, out_min = compareAccessions(gene_list, accession_dict, matrix_k)
-        file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
-with open(results_output_path, newline='') as csvfile:
-    results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
-    for result in file_stats:
-        results_writer.writerow = result
-exit()
-#print_minhash_to_pickle(3, 11, sequence_dict)
-print(len(sequence_dict))
-numSequences = len(sequence_dict)
-matrix_length = numSequences + 1
-#matrix_dictionary = create_matrices(2, 11, matrix_length)
 
-if not os.path.exists(matrix_output_path):
-    command = input("External drive %s doesn't exist..continue? (y/n)" % matrix_output_path)
-    if command == 'n':
-        exit("exiting early because the external drive doesn't exist")
-else:
-    print("The external directory exists.")
-print("Running from k = " + str(from_k) + " to k = " + str(to_k))
 
-for k in range(from_k, to_k):
-    jaccard_matrix = np.empty(shape=(matrix_length, matrix_length), dtype=np.float32)
-    #pickle.dump(jaccard_matrix, open(matrix_output_path + "test_matrix.p", "wb"), protocol=3)
-    #np.savetxt(matrix_output_path + "test_matrix.txt", jaccard_matrix)
-    for i in range(1,  matrix_length):
-        jaccard_matrix[i][0] = i
-        jaccard_matrix[0][i] = i
-    pickle_file = get_minhash_pickle_filename(k, basePath)
-    sequence_minhash = pickle.load(open(pickle_file, "rb"))
-    np.fill_diagonal(jaccard_matrix, 1)
-    for i in range(2, matrix_length-1):
-        print(i)
-        for j in range(1, i+1):
-            minhash_col = sequence_minhash[jaccard_matrix[0][j]]
-            minhash_row = sequence_minhash[jaccard_matrix[i][0]]
-           # minhash_value = minhash_row.jaccard(minhash_col)
-           # print("Minhash value: " + str(minhash_value))
-            jaccard_matrix[i][j] = minhash_row.jaccard(minhash_col)
-       #pprint.pprint(jaccard_matrix[i])
-    np.savetxt(matrix_output_path + "matrix_k" + str(k) + ".txt", jaccard_matrix)
-    del jaccard_matrix #protect against possible MemoryError--doesn't do anything
-    #pickle.dump(jaccard_matrix, open(matrix_output_path + "matrix_k" + str(k) + ".p", "wb"))
-exit()
+def calc_minHash_stats(pickle_file_path, accession_pickle_file_path, matrix_output_path, cluster_file_path):
+    sequence_dict = pickle.load(open(pickle_file_path, "rb"))
+    accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
+    matrix_k = np.loadtxt(matrix_output_path + "matrix_k6.txt")
+    cluster_file_paths = getClusterFilenamesFromDirectory(cluster_file_path)
+    file_stats = list()
+    for path in cluster_file_paths:
+        split_path = str(path).split("/")
+        cluster_name = re.findall("\d+", split_path[len(split_path)-1])
+        num_records = 0
+        gene_list = list()
+        for record in SeqIO.parse(path, "fasta"):
+            gene_list.append(record.id)
+            num_records = num_records + 1
+        if num_records > 2:
+            print("Checking cluster #" + str(cluster_name))
+            in_max, in_min, out_max, out_min = compareAccessions(gene_list, accession_dict, matrix_k)
+            file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
+    with open(results_output_path, newline='') as csvfile:
+        results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
+        for result in file_stats:
+            results_writer.writerow = result
 
-accession_number_to_int_keys = list(accession_number_dict.keys())
-for i in range(1, matrix_length):
-    jaccard_matrix[i][0] = accession_number_to_int_keys[sequence_index]
-    jaccard_matrix[0][i] = accession_number_to_int_keys[sequence_index]
-    sequence_index = sequence_index + 1
-for i in range(1, matrix_length):
-    print(i)
-    sequence_1 = accession_number_dict[jaccard_matrix[i][0]][1]
-    for j in range(1, matrix_length):
-        print(j)
-        sequence_2 = accession_number_dict[jaccard_matrix[0][i]][1]
-        jaccard_matrix[i][j] = getJaccardIndex(sequence_1, sequence_2, k)
 
-rowtowrite = list(jaccard_matrix[0])
-print(rowtowrite)
-exit()
-with open('/Users/nickpredey/Documents/Networks/jaccard.csv', newline='') as csvfile:
-    jaccard_writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_NONE)
-    #row
+def print_to_matrices(sequence_dict, matrix_output_path, from_k, to_k):
+    #print_minhash_to_pickle(3, 11, sequence_dict)
+    print(len(sequence_dict))
+    numSequences = len(sequence_dict)
+    matrix_length = numSequences + 1
+    #matrix_dictionary = create_matrices(2, 11, matrix_length)
 
+    if not os.path.exists(matrix_output_path):
+        command = input("External drive %s doesn't exist..continue? (y/n)" % matrix_output_path)
+        if command == 'n':
+            exit("exiting early because the external drive doesn't exist")
+    else:
+        print("The external directory exists.")
+    print("Running from k = " + str(from_k) + " to k = " + str(to_k))
+
+    for k in range(from_k, to_k):
+        jaccard_matrix = np.empty(shape=(matrix_length, matrix_length), dtype=np.float32)
+        #pickle.dump(jaccard_matrix, open(matrix_output_path + "test_matrix.p", "wb"), protocol=3)
+        #np.savetxt(matrix_output_path + "test_matrix.txt", jaccard_matrix)
+        for i in range(1,  matrix_length):
+            jaccard_matrix[i][0] = i
+            jaccard_matrix[0][i] = i
+        pickle_file = get_minhash_pickle_filename(k, basePath)
+        sequence_minhash = pickle.load(open(pickle_file, "rb"))
+        np.fill_diagonal(jaccard_matrix, 1)
+        for i in range(2, matrix_length-1):
+            print(i)
+            for j in range(1, i+1):
+                minhash_col = sequence_minhash[jaccard_matrix[0][j]]
+                minhash_row = sequence_minhash[jaccard_matrix[i][0]]
+               # minhash_value = minhash_row.jaccard(minhash_col)
+               # print("Minhash value: " + str(minhash_value))
+                jaccard_matrix[i][j] = minhash_row.jaccard(minhash_col)
+           #pprint.pprint(jaccard_matrix[i])
+        np.savetxt(matrix_output_path + "matrix_k" + str(k) + ".txt", jaccard_matrix)
+        del jaccard_matrix #protect against possible MemoryError--doesn't do anything
+        #pickle.dump(jaccard_matrix, open(matrix_output_path + "matrix_k" + str(k) + ".p", "wb"))
+
+
+def Main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-from_k', help='min k value for running any calculations.')
+    parser.add_argument('-to_k', default=from_k+1, help='max k value for running any calculations.')
+    parser.add_argument('-env', choices=['nick', 'nprito', 'pbs', 'lsb456'], help='The environment/machine you\'re working on. Helpful for filepaths.')
+    parser.add_argument('-m', choices=['create_matrix', 'stats'], help='Which programs you would like to run')
+    args = parser.parse_args()
+    if not len(sys.argv) > 1:
+        print("no arguments specified. Refer to -h or --help.")
+        exit(0)
+
+Main()
