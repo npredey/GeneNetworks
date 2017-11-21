@@ -208,14 +208,6 @@ def main():
                         help='The environment/machine you\'re working on. Helpful for filepaths.')
     parser.add_argument('-m', choices=['matrix', 'stats'], help='Which programs you would like to run')
 
-    # matrix_output_path = "/media/CP_MyBook/Pickle_Matrices/"
-    matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/"
-    # matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
-    pickle_file_path = basePath + "all_sequences.p"
-    accession_pickle_file_path = basePath + "accession_dict.p"
-    results_output_path = basePath + "test_matrix.csv"
-    clusters_input_path = basePath + "USearch_AA_Centroids/clusters_35"
-
     if not len(sys.argv) > 1:
         print("no arguments specified. Refer to -h or --help.")
         exit(0)
