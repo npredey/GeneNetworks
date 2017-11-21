@@ -136,7 +136,7 @@ def compare_accessions(gene_list, accession_dict, matrix_k):
            out_cluster_minHash[0], out_cluster_minHash[len(out_cluster_minHash) - 1]
 
 
-def calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, cluster_file_path):
+def calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, cluster_file_path, results_output_path):
     sequence_dict = pickle.load(open(pickle_file_path, "rb"))
     # accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
     # matrix_k = np.loadtxt(matrix_output_path + "matrix_k6.txt")
@@ -225,7 +225,9 @@ def main():
         base_path = "/Users/nickpredey/Documents/Networks/PickleFilesMinHash/"
     elif environment == "npr":
         base_path = "/home/catherine/Networks_Nick_NPR/"
-        matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/"
+        results_output_path = base_path + "test_matrix_40.csv"
+        matrix_output_path = "/data/matrix_k6.txt"
+        #matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/"
     elif environment == "pbs":
         base_path = "/home/catherine/Networks_Nick/"
         matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
@@ -234,25 +236,25 @@ def main():
         matrix_output_path = "/media/CP_MyBook/Pickle_Matrices/"
 
     if not os.path.exists(base_path):
-        print(f"The path \"{base_path}\" does not exist on this machine. Are you in the right environment?")
+        print("The path %s  does not exist on this machine. Are you in the right environment?" % basePath)
 
-    pickle_file_path = basePath + "all_sequences.p"
-    accession_pickle_file_path = basePath + "accession_dict.p"
-    results_output_path = basePath + "test_matrix.csv"
-    clusters_input_path = basePath + "USearch_AA_Centroids/clusters_35"  # This is only on NPR for right now
+    pickle_file_path = base_path + "all_sequences.p"
+    accession_pickle_file_path = base_path + "accession_dict.p"
+    #results_output_path = basePath + "test_matrix.csv"
+    clusters_input_path = base_path + "USearch_AA_Centroids/clusters_40"  # This is only on NPR for right now
 
     if mode == "matrix":
         sequence_dict = pickle.load(open(pickle_file_path, "rb"))
-        print_to_matrices(sequence_dict, matrix_output_path, from_k, to_k)
+        print_to_matrices(sequence_dict, matrix_output_path, base_k, to_k)
     elif mode == "stats":
         if not os.path.exists(clusters_input_path):
             print("cluster input path %s does not exist. exiting.." % clusters_input_path)
             exit(0)
         accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
         print("Reading matrix...")
-        matrix_k = np.loadtxt(matrix_output_path + "matrix_k" + str(from_k) + ".txt")
+        matrix_k = np.loadtxt(matrix_output_path)
         print("Matrix reading finished")
-        calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, clusters_input_path)
+        calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, clusters_input_path, results_output_path)
     else:
         print("No mode specified.")
 
