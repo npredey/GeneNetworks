@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1b09e5fa-eb30-482d-bd57-8dd814b935e7" name="Default" comment="" />
+    <list default="true" id="1b09e5fa-eb30-482d-bd57-8dd814b935e7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,15 +27,25 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CreateJaccardMatrixFiles.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CreateJaccardMatrixFiles.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CreateJaccardMatrixFiles.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101">
-              <caret line="201" column="11" lean-forward="true" selection-start-line="201" selection-start-column="11" selection-end-line="201" selection-end-column="11" />
+            <state relative-caret-position="303">
+              <caret line="201" column="11" lean-forward="false" selection-start-line="201" selection-start-column="11" selection-end-line="201" selection-end-column="11" />
               <folding>
                 <element signature="e#18#28#0" expanded="true" />
-                <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+                <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="5" lean-forward="false" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -130,25 +142,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.CreateJaccardMatrixFiles">
-    <configuration default="false" name="CreateJaccardMatrixFiles" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/bin/python3.6" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CreateJaccardMatrixFiles.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <method />
-    </configuration>
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -297,14 +290,28 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method />
     </configuration>
+    <configuration default="false" name="CreateJaccardMatrixFiles" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/Cellar/python3/3.6.2/Frameworks/Python.framework/Versions/3.6/bin/python3.6" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CreateJaccardMatrixFiles.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="Python.CreateJaccardMatrixFiles" />
     </list>
-    <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Python.CreateJaccardMatrixFiles" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
@@ -321,6 +328,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27825466" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -361,7 +369,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -372,7 +380,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -383,25 +391,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/python_stubs/-1625016946/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2340">
-          <caret line="156" column="4" lean-forward="false" selection-start-line="156" selection-start-column="4" selection-end-line="156" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CreateJaccardMatrixFiles.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -419,7 +409,25 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/python_stubs/-1625016946/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2340">
+          <caret line="156" column="4" lean-forward="false" selection-start-line="156" selection-start-column="4" selection-end-line="156" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CreateJaccardMatrixFiles.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#18#28#0" expanded="true" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -458,7 +466,7 @@
           <caret line="64" column="43" lean-forward="false" selection-start-line="64" selection-start-column="43" selection-end-line="64" selection-end-column="43" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -483,7 +491,7 @@
           <caret line="8" column="0" lean-forward="true" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding>
             <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
           </folding>
         </state>
       </provider>
@@ -548,22 +556,22 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ClusterStats.py" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/CreateJaccardMatrixFiles.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="7" lean-forward="false" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
-          <folding />
+        <state relative-caret-position="303">
+          <caret line="201" column="11" lean-forward="false" selection-start-line="201" selection-start-column="11" selection-end-line="201" selection-end-column="11" />
+          <folding>
+            <element signature="e#18#28#0" expanded="true" />
+            <marker date="1511282340000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CreateJaccardMatrixFiles.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="201" column="11" lean-forward="true" selection-start-line="201" selection-start-column="11" selection-end-line="201" selection-end-column="11" />
-          <folding>
-            <element signature="e#18#28#0" expanded="true" />
-            <marker date="1511281372000" expanded="true" signature="1830:1886" ph="SELECT seque... sequences" />
-          </folding>
+        <state relative-caret-position="60">
+          <caret line="4" column="5" lean-forward="false" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
