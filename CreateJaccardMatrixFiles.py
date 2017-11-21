@@ -199,6 +199,7 @@ def print_to_matrices(sequence_dict, matrix_output_path, from_k, to_k):
         # pickle.dump(jaccard_matrix, open(matrix_output_path + "matrix_k" + str(k) + ".p", "wb"))
 
 
+# TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-k_base', type=int, required=True, help='base k value for running any calculations.')
@@ -227,7 +228,7 @@ def main():
         base_path = "/home/catherine/Networks_Nick_NPR/"
         results_output_path = base_path + "test_matrix_40.csv"
         matrix_output_path = "/data/matrix_k6.txt"
-        #matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/"
+        # matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/" #nprito, I believe
     elif environment == "pbs":
         base_path = "/home/catherine/Networks_Nick/"
         matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
@@ -240,7 +241,7 @@ def main():
 
     pickle_file_path = base_path + "all_sequences.p"
     accession_pickle_file_path = base_path + "accession_dict.p"
-    #results_output_path = basePath + "test_matrix.csv"
+    # results_output_path = basePath + "test_matrix.csv"
     clusters_input_path = base_path + "USearch_AA_Centroids/clusters_40"  # This is only on NPR for right now
 
     if mode == "matrix":
