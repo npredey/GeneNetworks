@@ -13,20 +13,6 @@ from sortedcontainers import SortedSet
 import re
 import argparse
 
-basePath = "/home/catherine/Networks_Nick_NPR/"
-# basePath = "/Users/nickpredey/Documents/Networks/PickleFilesMinHash/"
-# basePath = "/home/lsb456/Networks_nick/"
-# basePath = "/home/catherine/Networks_Nick/"
-# matrix_output_path = "/media/CP_MyBook/Pickle_Matrices/"
-matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/"
-# matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
-pickle_file_path = basePath + "all_sequences.p"
-accession_pickle_file_path = basePath + "accession_dict.p"
-results_output_path = basePath + "test_matrix.csv"
-clusters_input_path = basePath + "USearch_AA_Centroids/clusters_35"
-from_k = 7
-to_k = 9
-
 
 def get_minhash_pickle_filename(k, bp):
     return bp + "accession_jaccard_k" + str(k) + ".p"
