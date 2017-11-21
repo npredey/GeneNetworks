@@ -154,7 +154,7 @@ def calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, cluster_file_
             print("Checking cluster #" + str(cluster_name))
             in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
             file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
-    with open(results_output_path, newline='') as csvfile:
+    with open(results_output_path, 'w', newline='') as csvfile:
         results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
         for result in file_stats:
             results_writer.writerow = result
