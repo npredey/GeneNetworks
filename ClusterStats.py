@@ -40,18 +40,16 @@ def compare_accessions(cluster_gene_list, accession_dict, matrix_k):
         # print("accession1: " + str(accession1))
         accession2 = int(accession_dict[pair[1]][0])
         # print("accession2: " + str(accession2))
-        lookup_row, lookup_col = getLookupRowAndColumn(accession1, accession2)
+        lookup_row, lookup_col = get_lookup_row_and_column(accession1, accession2)
         in_cluster_minHash.add(matrix_k[lookup_row][lookup_col])
         # this iteration calculates for outside of the cluster
         for key, value in accession_dict.items():
             outside_cluster_index = int(value[0])
-            if outside_cluster_index in cluster_gene_list_as_int:
-                continue
-            if accession1 != outside_cluster_index:
-                lookup_row, lookup_col = getLookupRowAndColumn(accession1, outside_cluster_index)
+            if outside_cluster_index not in cluster_gene_list_as_int:
+                lookup_row, lookup_col = get_lookup_row_and_column(accession1, outside_cluster_index)
                 out_cluster_minHash.add(matrix_k[lookup_row][lookup_col])
-            if accession2 != outside_cluster_index:
-                lookup_row, lookup_col = getLookupRowAndColumn(accession2, outside_cluster_index)
+
+                lookup_row, lookup_col = get_lookup_row_and_column(accession2, outside_cluster_index)
                 out_cluster_minHash.add(matrix_k[lookup_row][lookup_col])
     return in_cluster_minHash[len(in_cluster_minHash) - 1], in_cluster_minHash[0], \
            out_cluster_minHash[len(out_cluster_minHash) - 1], out_cluster_minHash[0]
