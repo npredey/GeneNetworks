@@ -80,10 +80,11 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
                 print("Checking cluster #" + str(cluster_name))
                 in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
                 file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
-        with open(cluster_result_output_path, 'w', newline='') as csvfile:
-            results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
-            for result in file_stats:
-                results_writer.writerow(result)
+            with open(cluster_result_output_path, 'a', newline='') as csvfile:
+                output = "{} {} {} {} {} {}".format(str(cluster_name[0]), str(num_records), str(in_max), str(in_min),
+                                                    str(out_max), str(out_min))
+                print(output)
+                csvfile.write(output + '\n')
 
 
 # TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
