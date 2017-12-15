@@ -108,7 +108,7 @@ def main():
                                                            'it will be created if it does not already exist. Should contain'
                                                            'information about the k value of the matrix',
                         dest='output_directory')
-    parser.add_argument('-t', help='Flag to force an empty matrix for testing purposes.', default=True)
+    parser.add_argument('-t', help='Flag to force an empty matrix for testing purposes.', default=False)
     if not len(sys.argv) > 1:
         print("no arguments specified. Refer to -h or --help.")
         exit(0)
