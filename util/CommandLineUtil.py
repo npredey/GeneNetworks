@@ -24,7 +24,7 @@ def parse_environment(environment, matrix_k_value, thresholds, cluster_output_di
     for threshold in thresholds:
         current_input = clusters_input_path.format(threshold)
         current_output = results_output_path.format(threshold)
-        print(current_input)
+        #print(current_input)
         cluster_io_paths.append((current_input, current_output))
-    print(cluster_io_paths)
+    #print(cluster_io_paths)
     return base_path, cluster_io_paths, matrix_input_path

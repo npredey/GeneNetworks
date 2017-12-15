@@ -60,14 +60,15 @@ def compare_accessions(cluster_gene_list, accession_dict, matrix_k):
 
 
 def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
+    header = 'cluster_id num_genes_in_cluster max_in min_in max_out min_out'
     for io_paths in cluster_io_paths:
         cluster_input_dir = io_paths[0]
         cluster_result_output_path = io_paths[1]
+        print_header = True
         if not os.path.exists(cluster_input_dir):
             print("cluster input path {} does not exist. exiting..".format(cluster_input_dir))
             continue
         cluster_file_paths = get_cluster_filenames_from_directory(cluster_input_dir)
-        file_stats = list()
         for path in cluster_file_paths:
             split_path = str(path).split("/")
             cluster_name = re.findall("\d+", split_path[len(split_path) - 1])
@@ -79,10 +80,11 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
             if num_records > 2:
                 print("Checking cluster #" + str(cluster_name))
                 in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
-                file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
                 with open(cluster_result_output_path, 'a', newline='') as csvfile:
                     output = "{} {} {} {} {} {}".format(str(cluster_name[0]), str(num_records), str(in_max), str(in_min),
                                                         str(out_max), str(out_min))
+                    if print_header:
+                        csvfile.write('{0}\n'.format(header))
                     print(output)
                     csvfile.write(output + '\n')
 
