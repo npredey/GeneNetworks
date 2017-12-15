@@ -1,12 +1,17 @@
 # import psycopg2
+import argparse
 import csv
+import itertools
+import re
+import sys
+import os
+import _pickle as pickle
+import numpy as np
 
 from Bio import SeqIO
-import itertools
 from sortedcontainers import SortedSet
-import re
-import argparse
-from util import *
+from util.util import *
+from util.CommandLineUtil import *
 
 
 def get_and_print_accessions_to_pickle(sequence_dictionary):
@@ -28,7 +33,6 @@ def get_lookup_row_and_column(accession_key1, accession_key2):
     return lookup_row, lookup_col
 
 
-# gene_list is a list of
 def compare_accessions(cluster_gene_list, accession_dict, matrix_k):
     in_cluster_minHash = SortedSet()
     out_cluster_minHash = SortedSet()
@@ -55,26 +59,31 @@ def compare_accessions(cluster_gene_list, accession_dict, matrix_k):
            out_cluster_minHash[len(out_cluster_minHash) - 1], out_cluster_minHash[0]
 
 
-def calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, cluster_file_path, results_output_path):
-    sequence_dict = pickle.load(open(pickle_file_path, "rb"))
-    cluster_file_paths = get_cluster_filenames_from_directory(cluster_file_path)
-    file_stats = list()
-    for path in cluster_file_paths:
-        split_path = str(path).split("/")
-        cluster_name = re.findall("\d+", split_path[len(split_path) - 1])
-        num_records = 0
-        gene_list = list()
-        for record in SeqIO.parse(path, "fasta"):
-            gene_list.append(record.id)
-            num_records = num_records + 1
-        if num_records > 2:
-            print("Checking cluster #" + str(cluster_name))
-            in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
-            file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
-    with open(results_output_path, 'w', newline='') as csvfile:
-        results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
-        for result in file_stats:
-            results_writer.writerow(result)
+def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
+    for io_paths in cluster_io_paths:
+        cluster_input_dir = io_paths[0]
+        cluster_result_output_path = io_paths[1]
+        if not os.path.exists(cluster_input_dir):
+            print("cluster input path {} does not exist. exiting..".format(cluster_input_dir))
+            continue
+        cluster_file_paths = get_cluster_filenames_from_directory(cluster_input_dir)
+        file_stats = list()
+        for path in cluster_file_paths:
+            split_path = str(path).split("/")
+            cluster_name = re.findall("\d+", split_path[len(split_path) - 1])
+            num_records = 0
+            gene_list = list()
+            for record in SeqIO.parse(path, "fasta"):
+                gene_list.append(record.id)
+                num_records = num_records + 1
+            if num_records > 2:
+                print("Checking cluster #" + str(cluster_name))
+                in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
+                file_stats.append((cluster_name, num_records, in_max, in_min, out_max, out_min))
+        with open(cluster_result_output_path, 'w', newline='') as csvfile:
+            results_writer = csv.writer(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE)
+            for result in file_stats:
+                results_writer.writerow(result)
 
 
 # TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
@@ -83,65 +92,59 @@ def main():
     parser.add_argument('-env', choices=['nick', 'npr', 'pbs', 'lsb456'], required=True,
                         help='The environment/machine you\'re working on. Helpful for filepaths.')
     #  parser.add_argument('-m', choices=['stats'], help='Which programs you would like to run')
-    parser.add_argument('-clust_id', help='The cluster id (threshold) to run.')
-    parser.add_argument('-k', help='The k value for the matrix.')
+    parser.add_argument('-k',
+                        help='The k value for the matrix.')
+    parser.add_argument(
+        '-cluster_vals',
+        nargs="*",  # expects ≥ 0 arguments
+        type=int,
+        default=[35, 40, 50, 60, 70, 80, 90],
+        dest='thresholds'  # default to all cluster directories
+    )
+    parser.add_argument('-output_dir', required=True, help='Directory name to hold each cluster output by matrix k value.'
+                                                           'it will be created if it does not already exist. Should contain'
+                                                           'information about the k value of the matrix',
+                        dest='output_directory')
+    parser.add_argument('-t', help='Flag to force an empty matrix for testing purposes.', default=True)
     if not len(sys.argv) > 1:
         print("no arguments specified. Refer to -h or --help.")
         exit(0)
     args = parser.parse_args()
     environment = args.env
+    output_directory = args.output_directory
     #  mode = args.m
 
-    base_path = ""
-    matrix_output_path = ""
+    thresholds = args.thresholds
     kmer_matrix_value = 6
-    cluster_id_value = 40
     if args.k:
         kmer_matrix_value = args.k
     else:
         print('No k value specified. Defaulting to {}'.format(kmer_matrix_value))
-    if args.clust_id:
-        cluster_id_value = args.clust_id
-    else:
-        print('No cluster id value specified. Defaulting to {}'.format(cluster_id_value))
-    if environment == "nick":
-        base_path = "/Users/nickpredey/Documents/Networks/"
-        matrix_output_path = "NOT YET IMPLEMENTED"
-        results_output_path = base_path + "test_matrix_40.csv"
-    elif environment == "npr":
-        base_path = "/home/catherine/Networks_Nick_NPR/"
-        results_output_path = '{0}test_matrix_{1}.csv'.format(base_path, cluster_id_value)
-        matrix_output_path = "/data/matrix_k{0}.txt".format(kmer_matrix_value)
-        # matrix_output_path = "/media/catherine/ExtraDrive1/Network_Matrices/" #nprito, I believe
-    elif environment == "pbs":
-        base_path = "/home/catherine/Networks_Nick/"
-        matrix_output_path = "/media/catherine/My Book/Network_Matrices/"
-        results_output_path = base_path + "test_matrix_40.csv"
-    elif environment == "lsb456":
-        base_path = "/home/lsb456/Networks_nick/"
-        results_output_path = base_path + "test_matrix_40.csv"
-        matrix_output_path = "/media/CP_MyBook/Pickle_Matrices/"
+    base_path, cluster_io_paths, matrix_output_path = parse_environment(environment, kmer_matrix_value, thresholds, output_directory)
 
     if not os.path.exists(base_path):
         print("The path {}  does not exist on this machine. Are you in the right environment?".format(base_path))
 
+    if not os.path.exists(output_directory):
+        print("Output directory {0} does not exist. It will be created.".format(output_directory))
+        os.makedirs(output_directory)
     pickle_file_path = base_path + "all_sequences.p"
     accession_pickle_file_path = base_path + "accession_dict.p"
-    # results_output_path = basePath + "test_matrix.csv"
-    clusters_input_path = "{0}USearch_AA_Centroids/clusters_{1}".format(base_path, cluster_id_value)
 
-    if not os.path.exists(clusters_input_path):
-        print("cluster input path {} does not exist. exiting..".format(clusters_input_path))
-        exit(0)
     accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
     print("Reading matrix...")
-    matrix_k = np.loadtxt(matrix_output_path)
+    if args.t:
+        matrix_k = np.zeros(shape=(10**5, 10**5))
+    else:
+        matrix_k = np.loadtxt(matrix_output_path)
     print("Matrix reading finished")
 
     print(
-        "Running with parameters: ID Threshold= {0}\nMatrix k value = {1}".format(cluster_id_value, kmer_matrix_value)
+        'Running with parameters: ID Thresholds= {0}'
+        '\nMatrix k value = {1}'
+        '\nOutput directory = {2}'.format(thresholds, kmer_matrix_value, output_directory)
     )
-    calc_minHash_stats(pickle_file_path, accession_dict, matrix_k, clusters_input_path, results_output_path)
+    calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths)
 
 
 main()
