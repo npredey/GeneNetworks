@@ -5,7 +5,7 @@ def parse_environment(environment, matrix_k_value, thresholds, cluster_output_di
     cluster_io_paths = list()
     if environment == "nick":
         base_path = "/Users/nickpredey/Documents/Networks/"
-        matrix_output_path = "NOT YET IMPLEMENTED"
+        matrix_output_path = "/Users/nickpredey/Documents/Networks/test_matrix.txt"
         results_output_path = base_path + "test_matrix_{0}.csv"
     elif environment == "npr":
         base_path = "/home/catherine/Networks_Nick_NPR/"
@@ -21,10 +21,9 @@ def parse_environment(environment, matrix_k_value, thresholds, cluster_output_di
         base_path = "/home/lsb456/Networks_nick/"
         results_output_path = base_path + "test_matrix_40.csv"
         matrix_output_path = "/media/CP_MyBook/Pickle_Matrices/"
+
     for threshold in thresholds:
         current_input = clusters_input_path.format(threshold)
         current_output = results_output_path.format(threshold)
-        #print(current_input)
         cluster_io_paths.append((current_input, current_output))
-    #print(cluster_io_paths)
     return base_path, cluster_io_paths, matrix_input_path

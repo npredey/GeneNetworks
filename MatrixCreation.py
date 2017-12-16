@@ -1,7 +1,7 @@
-import numpy as np
 import _pickle as pickle
 import os
-from util import *
+
+import numpy as np
 
 
 def output_path_exist(matrix_output_path, from_k, to_k):
@@ -29,6 +29,7 @@ def print_to_matrices(sequence_dict, matrix_output_path, from_k, to_k, base_path
         for i in range(1, matrix_length):
             jaccard_matrix[i][0] = i
             jaccard_matrix[0][i] = i
+
         pickle_file = get_minhash_pickle_filename(k, base_path)
         sequence_minhash = pickle.load(open(pickle_file, "rb"))
         np.fill_diagonal(jaccard_matrix, 1)

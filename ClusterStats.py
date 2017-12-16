@@ -1,17 +1,13 @@
 # import psycopg2
 import argparse
-import csv
 import itertools
 import re
-import sys
-import os
-import _pickle as pickle
-import numpy as np
 
 from Bio import SeqIO
 from sortedcontainers import SortedSet
-from util.util import *
+
 from util.CommandLineUtil import *
+from util.util import *
 
 
 def get_and_print_accessions_to_pickle(sequence_dictionary):
@@ -123,7 +119,11 @@ def main():
         kmer_matrix_value = args.k
     else:
         print('No k value specified. Defaulting to {}'.format(kmer_matrix_value))
-    base_path, cluster_io_paths, matrix_output_path = parse_environment(environment, kmer_matrix_value, thresholds, output_directory)
+
+    base_path, cluster_io_paths, matrix_output_path = parse_environment(environment,
+                                                                        kmer_matrix_value,
+                                                                        thresholds,
+                                                                        output_directory)
 
     if not os.path.exists(base_path):
         print("The path {}  does not exist on this machine. Are you in the right environment?".format(base_path))
@@ -131,10 +131,12 @@ def main():
     if not os.path.exists(output_directory):
         print("Output directory {0} does not exist. It will be created.".format(output_directory))
         os.makedirs(output_directory)
+
     pickle_file_path = base_path + "all_sequences.p"
     accession_pickle_file_path = base_path + "accession_dict.p"
 
     accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
+
     print("Reading matrix...")
     if args.t:
         matrix_k = np.zeros(shape=(10**5, 10**5))

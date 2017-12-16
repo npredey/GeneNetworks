@@ -1,9 +1,8 @@
-import sys
-from datasketch import MinHash
-import numpy as np
 import _pickle as pickle
-import pprint
 import os
+
+import numpy as np
+from datasketch import MinHash
 
 
 def get_minhash_pickle_filename(k, bp):
@@ -56,7 +55,6 @@ def print_sequences_to_pickle():
     cursor = conn.cursor()
     cursor.execute("SELECT sequence_id, accession_number, seq FROM sequences")
     records = cursor.fetchall()
-    numSequences = len(records)
     sequence_dictionary = dict()
     for record in records:
         sequence_id = record[0]
@@ -82,9 +80,9 @@ def print_minhash_to_pickle(from_k, to_k, sequence_dict):
 
 # This takes in the directory of cluster files and returns all of the absolute file
 # paths to be used later in the program
-def get_cluster_filenames_from_directory(clusterFileDirectory):
+def get_cluster_filenames_from_directory(cluster_file_directory):
     file_paths = []
-    for folder, subs, files in os.walk(clusterFileDirectory):
+    for folder, subs, files in os.walk(cluster_file_directory):
         for filename in files:
             file_paths.append(os.path.abspath(os.path.join(folder, filename)))
     return file_paths
