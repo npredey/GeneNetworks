@@ -2,6 +2,7 @@
 import argparse
 import itertools
 import re
+import sys
 
 from Bio import SeqIO
 from sortedcontainers import SortedSet
