@@ -82,7 +82,7 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
                                                         str(out_max), str(out_min))
                     if print_header:
                         csvfile.write('{0}\n'.format(header))
-			print_header = False
+                        print_header = False
                     print(output)
                     csvfile.write(output + '\n')
 
