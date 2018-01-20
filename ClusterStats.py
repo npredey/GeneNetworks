@@ -78,13 +78,45 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
                 print("Checking cluster #" + str(cluster_name))
                 in_max, in_min, out_max, out_min = compare_accessions(gene_list, accession_dict, matrix_k)
                 with open(cluster_result_output_path, 'a', newline='') as csvfile:
-                    output = "{} {} {} {} {} {}".format(str(cluster_name[0]), str(num_records), str(in_max), str(in_min),
+                    output = "{} {} {} {} {} {}".format(str(cluster_name[0]), str(num_records), str(in_max),
+                                                        str(in_min),
                                                         str(out_max), str(out_min))
                     if print_header:
                         csvfile.write('{0}\n'.format(header))
                         print_header = False
                     print(output)
                     csvfile.write(output + '\n')
+
+
+def parse_cluster_stats(cluster_stats_file_path):
+    cluster_name = 0
+    cluster_size = 1
+    max_in = 2
+    min_in = 3
+    max_out = 4
+    min_out = 5
+
+    cluster_file_list = list()
+    if os.path.isdir(cluster_stats_file_path):
+        cluster_file_list = get_cluster_filenames_from_directory(cluster_stats_file_path)
+    else:
+        cluster_file_list.append(cluster_stats_file_path)
+    for file in cluster_file_list:
+        output_file_path = str(file).split(".")[0] + "_bad_cluster_list.csv"
+        bad_clusters = list()
+        with open(file, "rb") as infile:
+            is_header = True
+            outfile = open(output_file_path, 'w+')
+            for line in infile:
+                line = str(line)
+                if is_header:
+                    is_header = False
+                else:
+                    split_line = line.split(" ")
+                    clust_name = split_line[cluster_name]
+                    if float(split_line[max_out]) > float(split_line[max_in]):
+                        outfile.write("{}\n".format(clust_name))
+            outfile.close()
 
 
 # TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
@@ -102,11 +134,13 @@ def main():
         default=[35, 40, 50, 60, 70, 80, 90],
         dest='thresholds'  # default to all cluster directories
     )
-    parser.add_argument('-output_dir', required=True, help='Directory name to hold each cluster output by matrix k value.'
-                                                           'it will be created if it does not already exist. Should contain'
-                                                           'information about the k value of the matrix',
+    parser.add_argument('-output_dir',
+                        help='Directory name to hold each cluster output by matrix k value.'
+                             'it will be created if it does not already exist. Should contain'
+                             'information about the k value of the matrix',
                         dest='output_directory')
     parser.add_argument('-t', help='Flag to force an empty matrix for testing purposes.', default=False)
+    parser.add_argument('-p', help='Parse a directory or file of cluster stats', type=str)
     if not len(sys.argv) > 1:
         print("no arguments specified. Refer to -h or --help.")
         exit(0)
@@ -114,7 +148,9 @@ def main():
     environment = args.env
     output_directory = args.output_directory
     #  mode = args.m
-
+    if args.p:
+        parse_cluster_stats(args.p)
+        exit(0)
     thresholds = args.thresholds
     kmer_matrix_value = 6
     if args.k:
@@ -141,7 +177,7 @@ def main():
 
     print("Reading matrix...")
     if args.t:
-        matrix_k = np.zeros(shape=(10**5, 10**5))
+        matrix_k = np.zeros(shape=(10 ** 5, 10 ** 5))
     else:
         matrix_k = np.loadtxt(matrix_output_path)
     print("Matrix reading finished")
