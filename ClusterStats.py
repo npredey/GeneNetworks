@@ -110,7 +110,11 @@ def parse_cluster_stats(cluster_stats_file_path):
             for line in infile:
                 line = str(line)
                 if is_header:
-                    is_header = False
+                    if not line.startswith('cluster_name'):
+                        print("File is not in the correct format.")
+                        break
+                    else:
+                        is_header = False
                 else:
                     split_line = line.split(" ")
                     clust_name = split_line[cluster_name]
