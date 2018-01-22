@@ -120,7 +120,8 @@ def parse_cluster_stats(cluster_stats_file_path):
                     clust_name = split_line[cluster_name]
                     if float(split_line[max_out]) > float(split_line[max_in]):
                         outfile.write("{}\n".format(clust_name))
-            outfile.close()
+            if not is_header:
+                outfile.close()
 
 
 # TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
