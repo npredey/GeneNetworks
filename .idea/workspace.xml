@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1b09e5fa-eb30-482d-bd57-8dd814b935e7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ClusterStats.py" afterPath="$PROJECT_DIR$/ClusterStats.py" />
-    </list>
+    <list default="true" id="1b09e5fa-eb30-482d-bd57-8dd814b935e7" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +30,8 @@
       <file leaf-file-name="ClusterStats.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ClusterStats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="105" column="29" lean-forward="true" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
+            <state relative-caret-position="200">
+              <caret line="112" column="59" lean-forward="false" selection-start-line="112" selection-start-column="59" selection-end-line="112" selection-end-column="59" />
               <folding>
                 <element signature="e#18#33#0" expanded="true" />
               </folding>
@@ -839,8 +837,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ClusterStats.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="105" column="29" lean-forward="true" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
+        <state relative-caret-position="200">
+          <caret line="112" column="59" lean-forward="false" selection-start-line="112" selection-start-column="59" selection-end-line="112" selection-end-column="59" />
           <folding>
             <element signature="e#18#33#0" expanded="true" />
           </folding>
