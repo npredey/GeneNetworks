@@ -170,7 +170,7 @@ def parse_cluster_stats(cluster_stats_file_path, clusters_dir, graph_output_file
         print("Cluster directory {} does not exist. Exiting...".format(clusters_dir))
         return
     directory_names = [val[0] for val in os.walk(clusters_dir)]
-
+    print_graph_header = True
     for file in cluster_file_list:
         output_file_path = str(file).split(".")[0] + "_bad_cluster_list.csv"
         id_threshold = int(''.join(filter(str.isdigit,
@@ -184,7 +184,6 @@ def parse_cluster_stats(cluster_stats_file_path, clusters_dir, graph_output_file
         with open(file, "r") as infile:
             csv_reader = csv.reader(infile, delimiter=' ')
             is_header = True
-            print_graph_header = True
             num_bad_clusters = 0
             num_good_clusters = 0
             for row in csv_reader:
