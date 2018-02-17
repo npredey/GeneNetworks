@@ -5,6 +5,10 @@ import numpy as np
 from datasketch import MinHash
 
 
+def build_filepath(base_path, file):
+    return base_path + '/' + file
+
+
 def get_minhash_pickle_filename(k, bp):
     return bp + "accession_jaccard_k" + str(k) + ".p"
 
@@ -80,9 +84,10 @@ def print_minhash_to_pickle(from_k, to_k, sequence_dict):
 
 # This takes in the directory of cluster files and returns all of the absolute file
 # paths to be used later in the program
-def get_cluster_filenames_from_directory(cluster_file_directory):
+def get_filenames_from_directory(file_directory):
     file_paths = []
-    for folder, subs, files in os.walk(cluster_file_directory):
+    for folder, subs, files in os.walk(file_directory):
         for filename in files:
-            file_paths.append(os.path.abspath(os.path.join(folder, filename)))
+            if 'DS_Store' not in filename:
+                file_paths.append(os.path.abspath(os.path.join(folder, filename)))
     return file_paths

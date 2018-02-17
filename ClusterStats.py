@@ -3,6 +3,7 @@ import argparse
 import itertools
 import re
 import sys
+import csv
 
 from Bio import SeqIO
 from sortedcontainers import SortedSet
@@ -63,9 +64,9 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
         cluster_result_output_path = io_paths[1]
         print_header = True
         if not os.path.exists(cluster_input_dir):
-            print("cluster input path {} does not exist. exiting..".format(cluster_input_dir))
+            print("cluster input path {} does not exist. terminating this run.".format(cluster_input_dir))
             continue
-        cluster_file_paths = get_cluster_filenames_from_directory(cluster_input_dir)
+        cluster_file_paths = get_filenames_from_directory(cluster_input_dir)
         for path in cluster_file_paths:
             split_path = str(path).split("/")
             cluster_name = re.findall("\d+", split_path[len(split_path) - 1])
@@ -88,40 +89,154 @@ def calc_minHash_stats(accession_dict, matrix_k, cluster_io_paths):
                     csvfile.write(output + '\n')
 
 
-def parse_cluster_stats(cluster_stats_file_path):
-    cluster_name = 0
-    cluster_size = 1
-    max_in = 2
-    min_in = 3
-    max_out = 4
-    min_out = 5
+def check_cluster_sequence_length(cluster_directories, clust_name, id_threshold):
+    cluster_dir_to_check = ''
+    for directory in cluster_directories:
+        if str(id_threshold) in directory:
+            cluster_dir_to_check = directory
+            break
+    cluster_file_to_check = cluster_dir_to_check + '/clusters' + clust_name
+
+    sequences_in_cluster = list()
+    for record in SeqIO.parse(cluster_file_to_check, 'fasta'):
+        sequences_in_cluster.append(len(record.seq))
+
+    check_result = ''
+    length_difference = max(sequences_in_cluster) - min(sequences_in_cluster)
+    if length_difference < min(sequences_in_cluster) / 2:
+        check_result = "Length_difference=" + str(length_difference)
+    return check_result
+
+
+# parse a directory containing cluster files from USEARCH.
+# returns a tuple of
+def parse_clusters(cluster_files_directory, output_file):
+    output_header = "threshold,num_clusters,average_cluster_size,min_size,max_size,num_>2"
+    print(cluster_files_directory)
+    print_header = True
+    for base_dir, subs, files in os.walk(cluster_files_directory):
+        for sub in subs:
+            threshold = sub.split('_')[-1]
+            num_clusters = 0
+            average_cluster_size = 0
+            min_size = 0
+            max_size = 0
+            num_greater_2 = 0
+            num_genes = 0
+            for cluster_folder, subs1, _files in os.walk(build_filepath(base_dir, sub)):
+                print(threshold)
+                for file in _files:
+                    cluster_file = build_filepath(base_dir + '/' + sub, file)
+                    records = list(SeqIO.parse(cluster_file, 'fasta'))
+                    records_length = len(records)
+                    num_genes += records_length
+                    num_clusters += 1
+                    if records_length > max_size:
+                        max_size = records_length
+                    elif records_length < min_size:
+                        min_size = records_length
+                    if records_length > 2:
+                        num_greater_2 += 1
+
+            average_cluster_size = int(float(num_genes) / num_clusters)
+            with open(output_file, 'a') as output:
+                if print_header:
+                    output.write(output_header + '\n')
+                    print_header = False
+                else:
+                    output.write("{},{},{},{},{},{}\n".format(threshold, num_clusters, average_cluster_size, min_size,
+                                                             max_size, num_greater_2))
+
+
+def parse_cluster_stats(cluster_stats_file_path, clusters_dir, graph_output_file):
+    graph_output_header = "k, threshold, percent_bad"
+    cluster_name_index = 0
+    cluster_size_index = 1
+    max_in_index = 2
+    min_in_index = 3
+    max_out_index = 4
+    min_out_index = 5
+
+    num_bigger_max_in = 0
+    num_bigger_min_in = 0
 
     cluster_file_list = list()
     if os.path.isdir(cluster_stats_file_path):
-        cluster_file_list = get_cluster_filenames_from_directory(cluster_stats_file_path)
+        cluster_file_list = get_filenames_from_directory(cluster_stats_file_path)
     else:
         cluster_file_list.append(cluster_stats_file_path)
+
+    if not os.path.exists(clusters_dir):
+        print("Cluster directory {} does not exist. Exiting...".format(clusters_dir))
+        return
+    directory_names = [val[0] for val in os.walk(clusters_dir)]
+
     for file in cluster_file_list:
         output_file_path = str(file).split(".")[0] + "_bad_cluster_list.csv"
-        bad_clusters = list()
-        with open(file, "rb") as infile:
+        id_threshold = int(''.join(filter(str.isdigit,
+                                          file.split('/')[-1])))
+
+        k_value = int(''.join(filter(str.isdigit,
+                                          file.split('/')[-2])))
+
+        if 'bad' in str(file):
+            continue
+        with open(file, "r") as infile:
+            csv_reader = csv.reader(infile, delimiter=' ')
             is_header = True
-            for line in infile:
-                line = str(line)
+            print_graph_header = True
+            num_bad_clusters = 0
+            num_good_clusters = 0
+            for row in csv_reader:
+                #print(row)
                 if is_header:
-                    if 'cluster_id' not in line:
-                        print("File is not in the correct format.")
-                        break
-                    else:
-                        is_header = False
-                        outfile = open(output_file_path, 'w+')
+                    # if 'cluster_id' not in csv_reader.read():
+                    #     print('File {} is not in the correct format.\n {} is the problem line'.format(file, line))
+                    #     break
+                    # else:
+                    is_header = False
+                    outfile = open(output_file_path, 'w+')
+                    outfile.write('max_in min_in difference\n')
                 else:
-                    split_line = line.split(" ")
-                    clust_name = split_line[cluster_name]
-                    if float(split_line[max_out]) > float(split_line[max_in]):
-                        outfile.write("{}\n".format(clust_name))
+                    # split_line = line.split(" ")
+                    if len(row) < 5 or not any(char.isdigit() for char in row[0]):
+                        continue
+                    clust_name = row[cluster_name_index]
+                    bad_cluster = False
+                    output_line = ''
+                    if float(row[max_out_index]) > float(row[max_in_index]):
+                        output_line += clust_name + ' '
+                        bad_cluster = True
+                        # outfile.write("{}\n".format(clust_name.decode('utf-8')))
+
+                    if float(row[max_out_index]) > float(row[min_in_index]):
+                        output_line += clust_name + ' '
+                        bad_cluster = True
+
+                    if bad_cluster:
+                        num_bad_clusters += 1
+                        check_result = check_cluster_sequence_length(directory_names, clust_name, id_threshold)
+                        if check_result == '':
+                            continue
+                        outfile.write("{} {}\n".format(output_line, check_result))
+                        bad_cluster = False
+                    else:
+                        num_good_clusters += 1
+
+            percent_bad = -1
             if not is_header:
+                total_clusters = num_good_clusters + num_bad_clusters
+                percent_bad = float(num_bad_clusters) / total_clusters
+                outfile.write("Num bad clusters: {}\nNum Good clusters: {}\ntotal: {}\n Percent bad{} ".format(
+                    num_bad_clusters, num_good_clusters, total_clusters, percent_bad))
                 outfile.close()
+
+            with open(graph_output_file, 'a') as graph_output:
+                if print_graph_header:
+                    graph_output.write(graph_output_header + '\n')
+                    print_graph_header = False
+
+                graph_output.write("{},{},{}\n".format(k_value, id_threshold, percent_bad))
 
 
 # TODO let calculations run en masse, and print to stats file accordingly. make choosing the cluster directory extensible
@@ -139,22 +254,32 @@ def main():
         default=[35, 40, 50, 60, 70, 80, 90],
         dest='thresholds'  # default to all cluster directories
     )
-    parser.add_argument('-output_dir',
+    parser.add_argument('-output',
                         help='Directory name to hold each cluster output by matrix k value.'
                              'it will be created if it does not already exist. Should contain'
-                             'information about the k value of the matrix',
-                        dest='output_directory')
+                             'information about the k value of the matrix. In general, output_dir'
+                             'will be the output directory of any program running.',
+                        dest='output_directory', type=str)
     parser.add_argument('-t', help='Flag to force an empty matrix for testing purposes.', default=False)
     parser.add_argument('-p', help='Parse a directory or file of cluster stats', type=str)
+    parser.add_argument('-pc', help='Parse a directory of clusters (from USEARCH or similar program)', type=str)
+    parser.add_argument('-clusters_dir', help='Cluster files directory for parsing the cluster stats files.', type=str)
     if not len(sys.argv) > 1:
         print("no arguments specified. Refer to -h or --help.")
         exit(0)
     args = parser.parse_args()
     environment = args.env
     output_directory = args.output_directory
+    clusters_dir = args.clusters_dir
     #  mode = args.m
     if args.p:
-        parse_cluster_stats(args.p)
+        if environment == "nick":
+            parse_cluster_stats(args.p, clusters_dir, output_directory)
+        else:
+            parse_cluster_stats(args.p)
+        exit(0)
+    elif args.pc:
+        parse_clusters(args.pc, args.output_directory)
         exit(0)
     thresholds = args.thresholds
     kmer_matrix_value = 6
@@ -163,25 +288,25 @@ def main():
     else:
         print('No k value specified. Defaulting to {}'.format(kmer_matrix_value))
 
-    base_path, cluster_io_paths, matrix_output_path = parse_environment(environment,
-                                                                        kmer_matrix_value,
-                                                                        thresholds,
-                                                                        output_directory)
+    # base_path, cluster_io_paths, matrix_output_path = parse_environment(environment,
+    #                                                                     kmer_matrix_value,
+    #                                                                     thresholds,
+    #                                                                     output_directory)
 
-    if not os.path.exists(base_path):
-        print("The path {}  does not exist on this machine. Are you in the right environment?".format(base_path))
+    # if not os.path.exists(base_path):
+    #     print("The path {}  does not exist on this machine. Are you in the right environment?".format(base_path))
 
     if not os.path.exists(output_directory):
         print("Output directory {0} does not exist. It will be created.".format(output_directory))
         os.makedirs(output_directory)
 
-    pickle_file_path = base_path + "all_sequences.p"
-    accession_pickle_file_path = base_path + "accession_dict.p"
+    # pickle_file_path = base_path + "all_sequences.p"
+    # accession_pickle_file_path = base_path + "accession_dict.p"
+    #
+    # accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
 
-    accession_dict = pickle.load(open(accession_pickle_file_path, "rb"))
-
-    print("Reading matrix...")
     if args.t:
+        print("Reading matrix...")
         matrix_k = np.zeros(shape=(10 ** 5, 10 ** 5))
     else:
         matrix_k = np.loadtxt(matrix_output_path)
