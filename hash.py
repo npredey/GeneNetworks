@@ -71,7 +71,7 @@ m1, m2 = MinHash(), MinHash()
 # m1.update(d.encode('utf8'))
 # for d in data2:
 # m2.update(d.encode('utf8'))
-# print("Estimated Jaccard for data1 and data2 is", m1.jaccard(m2))
+#  print("Estimated Jaccard for data1 and data2 is", m1.jaccard(m2))
 
 s1 = set(data1)
 s2 = set(data2)

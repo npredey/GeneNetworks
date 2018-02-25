@@ -1,7 +1,16 @@
 import _pickle as pickle
 import os
-
 import numpy as np
+
+
+def get_and_print_accessions_to_pickle(sequence_dictionary):
+    accession_dict = dict()
+    for key, value in sequence_dictionary.items():
+        accession = value[0]
+        sequence = value[1]
+        accession_dict[accession] = (key, sequence)
+    pprint.pprint(accession_dict)
+    pickle.dump(accession_dict, open(accession_pickle_file_path, "wb"))
 
 
 def output_path_exist(matrix_output_path, from_k, to_k):

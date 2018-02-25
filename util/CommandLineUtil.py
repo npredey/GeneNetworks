@@ -7,6 +7,8 @@ def parse_environment(environment, matrix_k_value, thresholds, cluster_output_di
         base_path = "/Users/nickpredey/Documents/Networks/"
         matrix_output_path = "/Users/nickpredey/Documents/Networks/test_matrix.txt"
         results_output_path = base_path + "test_matrix_{0}.csv"
+        clusters_input_path = base_path + "USearch_AA_Centroids/clusters_{}"
+        matrix_input_path = ''  # matrices are not created in this environment, just use -t flag
     elif environment == "npr":
         base_path = "/home/catherine/Networks_Nick_NPR/"
         results_output_path = cluster_output_directory + 'cluster_{0}_results.csv'
